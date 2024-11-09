@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+</head>
+<body>
+    <h2>Welcome, {{ username }}!</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Short URL</th>
+                <th>Long URL</th>
+                <th>Clicks</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for url in urls %}
+                <tr>
+                    <td><a href="{{ url.short_url }}" target="_blank">{{ url.short_url }}</a></td>
+                    <td>{{ url.long_url }}</td>
+                    <td>{{ url.number_of_clicks }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="3">No URLs found for this user.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{{ url_for('index') }}">Back to Index</a>
+    <a href="{{ url_for('logout') }}">Logout</a>
+</body>
+</html>
