@@ -276,3 +276,23 @@ def login():
 
     return render_template('login.html', error_message=error_message)
 
+#Function that initiliazes the dashboard page
+@app.route('/dashboard', methods=['GET', 'POST'])
+def dashboard():
+    if 'user_id' not in session:
+        flash("You must be logged in or create an account to view your dashboard")
+        return redirect(url_for('login'))
+
+    if request.method == 'POST':
+        result = shorten_url()
+        urls = supabase.table('url_data').select('*').eq('user_id', session['user_id']).execute().data
+        if 'error' in result:
+            return render_template('dashboard.html', error_message=result['error'], 
+                                username=session.get('username'), urls=urls)
+        return render_template('dashboard.html', short_url=result['short_url'], 
+                             username=session.get('username'), urls=urls)
+
+    urls = supabase.table('url_data').select('*').eq('user_id', session['user_id']).execute().data
+    return render_template('dashboard.html', username=session.get('username'), urls=urls)
+
+#Function that initiliazes the index page
