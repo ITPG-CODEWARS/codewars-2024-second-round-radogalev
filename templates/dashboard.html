@@ -42,5 +42,149 @@
             </ul>
         </nav>
     </header>
+    <div data-aos="fade-up">
+    <div class="main-container">
+        <div class="url-shorterner-dashboard">
+            <h2 class="welcome-message">Welcome, {{ username }}!</h2>
+            <!-- Main form to submit long URL -->
+            <form id="urlForm" method="POST" class="index-wrapper">
+                <div class="input-wrapper">
+                    <input type="text" name="long_url" id="longUrlInput" placeholder="Enter the long URL" class="long_urls" required>
+                    <button type="button" class="edit-button" onclick="openEditModal()">
+                        <ion-icon name="hammer-outline" class="settings-icon"></ion-icon>
+                    </button>
+                </div>
+                <button type="submit" class="submit-button" name="shorten">Shorten</button>
+            </form>
+        
+            <!-- Modal for editing the short URL -->
+            <div id="editModal" class="modal">
+                <div class="modal-content">
+                    <span class="close" onclick="closeEditModal()">&times;</span>
+                    <h2>Edit Shortened URL</h2>
+                    <form id="modalForm" method="POST">
+                        <input type="hidden" name="long_url" id="modalLongUrl">
+                        <label for="custom_short_url">Custom Short URL (optional):</label>
+                        <input type="text" name="custom_short_url" placeholder="Enter custom short URL">
+                        <br>
+                        <label for="short_url_length">Length of Short URL (optional):</label>
+                        <input type="number" name="short_url_length" placeholder="Length" min="1">
+                        <br>
+                        <button type="submit" class="submit-button">Update URL</button>
+                    </form>
+                </div>
+            </div>
+
+            {% if error_message %}
+            <div class="error-message">
+                <span class="close-btn" onclick="this.parentElement.style.display='none';">&times;</span>
+                <p>{{ error_message }}</p>
+            </div>
+            {% endif %}
+
+            {% if short_url %}
+            <div class="response-container">
+                <div class="response-box">
+                    <h2 class="response-title">URL Successfully Shortened! 🎉</h2>
+                    <div class="url-display">
+                        <a href="{{ short_url }}" target="_blank" class="url-text">{{ short_url }}</a>
+                        <button onclick="copyToClipboard('{{ short_url }}')" class="copy-button">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                            </svg>
+                            Copy
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div id="copiedMessage" class="copied-message">Copied to clipboard!</div>
+            {% endif %}
+        </div>
+        </div>
+
+        <!-- Dashboard Table -->
+        <div class="table-container">
+            <table class="dashboard-table">
+                <thead>
+                    <tr>
+                        <th>Long URL</th>
+                        <th>Short URL</th>
+                        <th></th>
+                        <th>Created at</th>
+                        <th>Number of clicks</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for url in urls %}
+                        <tr>
+                            <td>{{ url.long_url }}</td>
+                            <td><a href="{{ url.short_url }}" target="_blank">{{ url.short_url }}</a></td>
+                            <td><i class='bx bx-dots-vertical-rounded' data-url-id="{{ url.id }}"></i></td>
+                            <td>{{ url.created_at }} </td>
+                            <td>{{ url.number_of_clicks }}</td>
+                            <td><ion-icon name="trash-bin-outline" id="trash-icon" data-url-id="{{ url.id }}" onclick="deleteUrl('{{ url.id }}')"></ion-icon></td>                        
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="3">No URLs found for this user.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Modal for URL options -->
+        <div id="urlOptionsModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Manage URL Options</h2>
+                
+                <!-- Display click count -->
+                <div class="option-group">
+                    <p><strong>Click Count:</strong> <span id="clickCount">0</span></p>
+                </div>
+        
+                <!-- URL Customization -->
+                <div class="option-group">
+                    <h3>Customize URL</h3>
+                    <input type="text" id="customUrl" placeholder="Enter custom short URL">
+                    <p class="hint">Leave empty to keep current URL</p>
+                </div>
+        
+                <!-- Click Limit -->
+                <div class="option-group">
+                    <h3>Click Limit</h3>
+                    <input type="number" id="clickLimit" min="1" placeholder="Maximum number of clicks allowed">
+                    <p class="hint">Leave empty for unlimited clicks</p>
+                </div>
+                <!-- Expiration Date -->
+                <div class="option-group">
+                    <h3>Expiration Date</h3>
+                    <input type="date" id="endDate">
+                    <p class="hint">Leave empty for no expiration</p>
+                </div>
+                <!-- Password Protection -->
+    
+                <!-- QR Code -->
+                <div class="option-group">
+                    <h3>QR Code</h3>
+                    <div id="qrCodeImage"></div>
+                    <button id="downloadQrCode" class="action-button">Download QR Code</button>
+                </div>
+                <button onclick="saveUrlOptions()" class="save-button">Save Changes</button>
+            </div>
+        </div>
+        <!-- Navigation Links -->
+        <div class="action-links">
+            <a href="{{ url_for('index') }}" class="nav-link">Back to Index</a>
+            <a href="{{ url_for('logout') }}" class="nav-link logout-button">Logout</a>
+        </div>
+    </div>
+</div>
+
+
+
+
 </body>
 </html>
