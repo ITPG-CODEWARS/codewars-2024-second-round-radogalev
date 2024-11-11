@@ -419,6 +419,74 @@ ion-icon {
     text-align: center;
 }
 
+/* Table Styling */
+
+.url-shorterner-dashboard{
+    flex-direction: column;
+    margin-bottom: 3rem;
+    float: left;
+}
+
+.table-container {
+    overflow-x: auto;
+    margin: 0 auto;
+    width: 100%;
+    max-width: 1400px;
+}
+
+.dashboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+}
+
+.dashboard-table th,
+.dashboard-table td {
+    padding: 1rem;
+    color: #fff;
+    text-align: left;
+    font-size: 1rem;
+}
+
+.dashboard-table th {
+    background-color: rgba(255, 255, 255, 0.2);
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.dashboard-table td a {
+    color: #f2f2f2;
+    text-decoration: none;
+}
+
+.dashboard-table tr:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.dashboard-table td {
+    max-width: 30rem;
+}
+
+.dots{
+    display:flex;
+    flex-direction:column;
+    gap: 2px;
+}
+.dot{
+    width: 0.1rem;
+    height: 0.1rem;
+    border-radius: 1000px;
+
+}
+i{
+    display:block;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
     color: white;
     border: none;
     cursor: pointer;
