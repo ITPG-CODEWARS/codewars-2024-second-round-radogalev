@@ -588,13 +588,135 @@ i{
 }
 
 
-    color: white;
-    border: none;
-    cursor: pointer;
-    border-radius: 15px;
+#trash-icon{
+   font-size: 1.4rem;
+   margin-left: 4rem;
+   cursor: pointer;
+   transition: all 0.4s;
 }
-button:hover {
-    background-color: blue;
+#trash-icon:hover{
+    transform: translateY(-20%);
+}
+.action-links {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.nav-link,
+.logout-button {
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 40px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.nav-link:hover,
+.logout-button:hover {
+    color: black;
+    background-color: white;
+    transition: all 0.3s ease;
+}
+.response-container {
+    margin-top: 2rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    animation: slideUp 0.5s ease-out;
+}
+
+.response-box {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.response-box:hover {
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+.response-title {
+    color: white;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.url-display {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 0.75rem;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.url-text {
+    color: white;
+    text-decoration: none;
+    font-size: 1rem;
+    word-break: break-all;
+    flex: 1;
+}
+
+.url-text:hover {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.copy-button {
+    background: white;
+    color: #3b82f6;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.copy-button:hover {
+    background: rgba(255, 255, 255, 0.9);
+    transform: translateY(-1px);
+}
+
+.copy-button svg {
+    width: 16px;
+    height: 16px;
+}
+
+.copied-message {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #10B981;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 2rem;
+    font-size: 0.875rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.copied-message.show {
+    opacity: 1;
 }
 p {
     margin-top: 20px;
