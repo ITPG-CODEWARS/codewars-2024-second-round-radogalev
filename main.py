@@ -124,3 +124,28 @@ def delete_url(url_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+# Function to get the details of the url
+@app.route('/api/url/<url_id>', methods=['GET'])
+def get_url_details(url_id):
+    if 'user_id' not in session:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        response = supabase.table('url_data').select('*').eq('id', url_id).execute()
+        if not response.data:
+            return jsonify({'error': 'URL not found'}), 404
+        
+        url_data = response.data[0]
+        if url_data['user_id'] != session['user_id']:
+            return jsonify({'error': 'Unauthorized'}), 401
+        
+        return jsonify({
+            'clicks': url_data['number_of_clicks'],
+            'click_limit': url_data.get('click_limit'),
+            'end_date': url_data.get('end_date'),
+            'password_protected': bool(url_data.get('password')),
+            'short_url': url_data['short_url']
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
