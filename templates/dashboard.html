@@ -3,34 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <link rel="stylesheet" href="static/styles.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <title>Dashboard Page</title>
 </head>
 <body>
-    <h2>Welcome, {{ username }}!</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Short URL</th>
-                <th>Long URL</th>
-                <th>Clicks</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for url in urls %}
-                <tr>
-                    <td><a href="{{ url.short_url }}" target="_blank">{{ url.short_url }}</a></td>
-                    <td>{{ url.long_url }}</td>
-                    <td>{{ url.number_of_clicks }}</td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="3">No URLs found for this user.</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <a href="{{ url_for('index') }}">Back to Index</a>
-    <a href="{{ url_for('logout') }}">Logout</a>
     <!-- Navbar -->
     <header>
         <nav>
