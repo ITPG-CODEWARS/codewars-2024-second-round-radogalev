@@ -262,6 +262,30 @@ ion-icon {
 }
 
 /* For devices with a max width of 480px (Mobile devices) */
+@media (max-width: 480px) {
+    .long_urls {
+        width: 90%;
+    }
+
+    .submit-button {
+        width: 90%;
+    }
+
+    .response-box {
+        padding: 10px;
+    }
+
+    .url-text {
+        font-size: 0.9rem;
+    }
+
+    .copy-button {
+        padding: 5px;
+    }
+
+    .modal-content {
+        width: 90%;
+    }
 }
 h1 {
     color: #333;
