@@ -357,18 +357,58 @@ ion-icon {
     cursor: pointer;
     font-size: 1rem;
     color: #333;
+    font-weight: 600
 }
-form {
-    margin-top: 20px;
+
+.register-link{
+    text-align: center;
 }
-input[type="text"] {
-    padding: 10px;
-    width: 300px;
-    margin-right: 10px;
+.register-link p a{
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
 }
-button {
-    padding: 10px 20px;
-    background-color: lightblue;
+.register-link p a:hover{
+    text-decoration: underline;
+}
+
+/* Error Message Styling */
+.error-message {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    color: #fff;
+    background-color: rgba(255, 0, 0, 0.8); /* Semi-transparent red */
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 30px;
+    padding: 0.8rem 1.2rem;
+    margin: 1rem 0;
+    text-align: center;
+    max-width: 85%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    transition: opacity 0.3s ease-in-out;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.error-message .close-btn {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #fff;
+    cursor: pointer;
+    float: right;
+    margin-left: 0.5rem;
+    transition: color 0.2s;
+}
+
+.error-message .close-btn:hover {
+    color: #ddd;
+}
+
     color: white;
     border: none;
     cursor: pointer;
