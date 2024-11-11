@@ -308,3 +308,38 @@ def index():
         return render_template('index.html', short_url=result['short_url'] , supabase_url=supabase_url, supabase_key=supabase_key)
     return render_template('index.html', upabase_url=supabase_url, supabase_key=supabase_key)
 
+#Function that redirects the user depending on the situation
+@app.route('/<short_url>')
+def redirect_url(short_url):
+    try:
+        response = supabase.table('url_data').select('*').eq('short_url', short_url).execute()
+        if not response.data:
+            return "URL not found", 404
+        
+        url_data = response.data[0]
+        
+        if url_data.get('end_date'):
+            end_date = datetime.strptime(url_data['end_date'], '%Y-%m-%d').date()
+            if datetime.now().date() > end_date:
+                return "This URL has expired", 403
+        
+        if url_data.get('click_limit'):
+            if url_data['number_of_clicks'] >= url_data['click_limit']:
+                return render_template('click_limit_reached.html')
+        
+        # Rest of the function remains the same
+        
+        supabase.table('url_data').update({
+            'number_of_clicks': url_data['number_of_clicks'] + 1
+        }).eq('id', url_data['id']).execute()
+        
+        return redirect(url_data['long_url'])
+    except Exception as e:
+        print(f"Error in redirect_url: {str(e)}")
+        return str(e), 500
+
+#Function that logs out the user
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('index'))
