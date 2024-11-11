@@ -102,3 +102,25 @@ def shorten_url():
         return {'error': str(e)}
 
 
+# Function to delete a row from the dashboard table and from the database
+@app.route('/api/url/<url_id>', methods=['DELETE'])
+def delete_url(url_id):
+    try:
+        if 'user_id' not in session:
+            return jsonify({'error': 'Unauthorized'}), 401
+
+        url_response = supabase.table("url_data").select('*').eq("id", url_id).eq("user_id", session['user_id']).execute()
+
+        if not url_response.data:
+            return jsonify({"error": "URL not found or unauthorized"}), 404
+
+        delete_response = supabase.table("url_data").delete().eq("id", url_id).execute()
+
+        if delete_response.data:
+            return jsonify({"message": "URL deleted successfully"}), 200
+        else:
+            return jsonify({"error": "Failed to delete URL"}), 500
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
