@@ -46,3 +46,9 @@ def validate_custom_url(custom_url):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+# Function to generate the short url sequence of characters
+def generate_short_url(length=6):
+    """Generate a random short URL."""
+    chars = string.ascii_letters + string.digits
+    short_url = "".join(random.choice(chars) for _ in range(length))
+    return short_url
