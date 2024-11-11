@@ -343,3 +343,8 @@ def redirect_url(short_url):
 def logout():
     session.clear()
     return redirect(url_for('index'))
+
+
+#Code that starts the project
+if __name__ == "__main__":
+    app.run(debug=True, port=5001) 
