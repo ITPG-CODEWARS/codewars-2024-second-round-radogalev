@@ -13,5 +13,15 @@
     </form>
     <a href="{{ url_for('login') }}">Already have an account? Login</a>
     
+    <header>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('index') }}">Home</a></li>
+                <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                <li><a href="{{ url_for('login') }}" class="auth-button">Login</a></li>
+                <li><a href="{{ url_for('register') }}" class="auth-button">Register</a></li>
+            </ul>
+        </nav>
+    </header>
 </body>
 </html>
