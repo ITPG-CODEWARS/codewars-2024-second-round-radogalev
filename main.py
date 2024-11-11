@@ -230,3 +230,30 @@ def generate_qr_code(url_id):
     except Exception as e:
         return {'error': str(e)}, 500
 
+# Function to register a user
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    error_message = None
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        confirm_password = request.form['confirm_password']
+
+        if password != confirm_password:
+            error_message = "Passwords do not match. Please try again."
+        else:
+            response = supabase.table('users').select('*').eq('username', username).execute()
+            if response.data:
+                error_message = "User already exists"
+            else:
+                hashed_password = generate_password_hash(password)
+                supabase.table('users').insert({
+                    'username': username,
+                    'password': hashed_password
+                }).execute()
+                return redirect(url_for('login'))
+
+    return render_template('register.html', error_message=error_message)
+
+
+#Function to log in a user
