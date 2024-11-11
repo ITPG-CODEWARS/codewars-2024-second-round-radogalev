@@ -52,3 +52,53 @@ def generate_short_url(length=6):
     chars = string.ascii_letters + string.digits
     short_url = "".join(random.choice(chars) for _ in range(length))
     return short_url
+
+# Function to intiliaze the shortened url
+@app.route('/shorten', methods=['POST'])
+def shorten_url():
+    long_url = request.form.get('long_url')
+    custom_short_url = request.form.get('custom_short_url', '').strip()
+    short_url_length = request.form.get('short_url_length', type=int)
+    
+    if not long_url:
+        return jsonify({"error": "No URL provided"}), 400
+
+    error_message = validate_url(long_url)
+    if error_message:
+        return {'error': error_message}
+
+    if custom_short_url:
+        response = supabase.table('url_data').select('short_url').eq('short_url', custom_short_url).execute()
+        if response.data:
+            return {'error': f"Error: '{custom_short_url}' is already taken."}
+        short_url = custom_short_url
+    elif short_url_length:
+        short_url = generate_short_url(short_url_length)
+        while True:
+            response = supabase.table('url_data').select('short_url').eq('short_url', short_url).execute()
+            if not response.data:
+                break
+            short_url = generate_short_url(short_url_length)
+    else:
+        short_url = generate_short_url()
+        while True:
+            response = supabase.table('url_data').select('short_url').eq('short_url', short_url).execute()
+            if not response.data:
+                break
+            short_url = generate_short_url()
+
+    try:
+        response = supabase.table('url_data').insert({
+            'user_id': session.get('user_id'),
+            'long_url': long_url,
+            'short_url': short_url,
+            'number_of_clicks': 0,
+            'created_at': datetime.now().isoformat()
+        }).execute()
+        
+        full_short_url = f"{request.url_root}{short_url}"
+        return {'short_url': full_short_url}
+    except Exception as e:
+        return {'error': str(e)}
+
+
