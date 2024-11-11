@@ -149,3 +149,57 @@ def get_url_details(url_id):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     
+# Function to update the url in the dasboard
+@app.route('/api/url/<url_id>/update', methods=['POST'])
+def update_url_settings(url_id):
+    if 'user_id' not in session:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        existing_url = supabase.table('url_data').select('*').eq('id', url_id).eq('user_id', session['user_id']).execute()
+        
+        if not existing_url.data:
+            return jsonify({'error': 'URL not found or unauthorized'}), 404
+            
+        existing_data = existing_url.data[0]
+        data = request.json
+        update_data = {}
+        
+        if 'click_limit' in data:
+            try:
+                update_data['click_limit'] = int(data['click_limit']) if data['click_limit'] else None
+            except ValueError:
+                return jsonify({'error': 'Invalid click limit value'}), 400
+        
+        if 'end_date' in data:
+            if data['end_date']:
+                try:
+                    datetime.strptime(data['end_date'], '%Y-%m-%d')
+                    update_data['end_date'] = data['end_date']
+                except ValueError:
+                    return jsonify({'error': 'Invalid date format'}), 400
+            else:
+                update_data['end_date'] = None
+        
+        if 'password' in data:
+            update_data['password'] = generate_password_hash(data['password']) if data['password'] else None
+        
+        if 'custom_url' in data and data['custom_url']:
+            check_response = supabase.table('url_data').select('id').eq('short_url', data['custom_url']).execute()
+            if check_response.data and str(check_response.data[0]['id']) != url_id:
+                return jsonify({'error': 'Custom URL already taken'}), 400
+            update_data['short_url'] = data['custom_url']
+        else:
+            update_data['short_url'] = existing_data['short_url']
+        
+        response = supabase.table('url_data').update(update_data).eq('id', url_id).eq('user_id', session['user_id']).execute()
+        
+        if not response.data:
+            return jsonify({'error': 'Failed to update URL'}), 500
+            
+        return jsonify({'message': 'URL settings updated successfully', 'data': response.data[0]})
+    
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
