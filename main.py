@@ -37,3 +37,12 @@ def validate_url(url):
     return None
 
 
+@app.route('/api/validate-custom-url/<custom_url>', methods=['GET'])
+def validate_custom_url(custom_url):
+    try:
+        response = supabase.table('url_data').select('id').eq('short_url', custom_url).execute()
+        is_available = len(response.data) == 0
+        return jsonify({'available': is_available})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
