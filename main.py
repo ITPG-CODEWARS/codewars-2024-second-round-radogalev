@@ -296,3 +296,15 @@ def dashboard():
     return render_template('dashboard.html', username=session.get('username'), urls=urls)
 
 #Function that initiliazes the index page
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    supabase_url = os.getenv("SUPABASE_URL")
+    supabase_key = os.getenv("SUPABASE_KEY")
+
+    if request.method == 'POST':
+        result = shorten_url()
+        if 'error' in result:
+            return render_template('index.html', error_message=result['error'], upabase_url=supabase_url, supabase_key=supabase_key)
+        return render_template('index.html', short_url=result['short_url'] , supabase_url=supabase_url, supabase_key=supabase_key)
+    return render_template('index.html', upabase_url=supabase_url, supabase_key=supabase_key)
+
