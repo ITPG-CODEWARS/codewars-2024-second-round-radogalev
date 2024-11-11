@@ -203,3 +203,30 @@ def update_url_settings(url_id):
         return jsonify({'error': str(e)}), 500
 
 
+# Function to generate the qr code
+@app.route('/api/url/<url_id>/qr', methods=['GET'])
+def generate_qr_code(url_id):
+    if 'user_id' not in session:
+        return {'error': 'Unauthorized'}, 401
+    
+    try:
+        response = supabase.table('url_data').select('short_url').eq('id', url_id).eq('user_id', session['user_id']).execute()
+        if not response.data:
+            return {'error': 'URL not found or unauthorized'}, 404
+        
+        short_url = f"{request.url_root}{response.data[0]['short_url']}"
+        
+        qr = qrcode.QRCode(version=1, box_size=10, border=5)
+        qr.add_data(short_url)
+        qr.make(fit=True)
+        
+        img = qr.make_image(fill_color="black", back_color="white")
+        
+        buffered = BytesIO()
+        img.save(buffered, format="PNG")
+        img_str = base64.b64encode(buffered.getvalue()).decode()
+        
+        return {'qr_code': f'data:image/png;base64,{img_str}'}
+    except Exception as e:
+        return {'error': str(e)}, 500
+
