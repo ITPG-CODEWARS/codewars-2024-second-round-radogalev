@@ -257,3 +257,22 @@ def register():
 
 
 #Function to log in a user
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    error_message = None
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+
+        response = supabase.table('users').select('*').eq('username', username).execute()
+        user = response.data[0] if response.data else None
+
+        if user and check_password_hash(user['password'], password):
+            session['user_id'] = user['user_id']
+            session['username'] = user['username']
+            return redirect(url_for('dashboard'))
+        else:
+            error_message = "Invalid username or password"
+
+    return render_template('login.html', error_message=error_message)
+
