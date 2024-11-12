@@ -136,21 +136,39 @@
                     <input type="number" id="clickLimit" min="1" placeholder="Maximum number of clicks allowed">
                     <p class="hint">Leave empty for unlimited clicks</p>
                 </div>
+        
                 <!-- Expiration Date -->
                 <div class="option-group">
                     <h3>Expiration Date</h3>
                     <input type="date" id="endDate">
                     <p class="hint">Leave empty for no expiration</p>
                 </div>
+        
                 <!-- Password Protection -->
-    
+                <div class="option-group">
+                    <h3>Password Protection</h3>
+                    <input type="password" id="urlPassword" placeholder="Enter password for URL">
+                    <p class="hint">Leave empty for no password protection</p>
+                </div>
+        
                 <!-- QR Code -->
                 <div class="option-group">
                     <h3>QR Code</h3>
                     <div id="qrCodeImage"></div>
-                    <button id="downloadQrCode" class="action-button">Download QR Code</button>
+                    <button id="downloadQrCode" class = "action-button">Download QR Code</button>
                 </div>
                 <button onclick="saveUrlOptions()" class="save-button">Save Changes</button>
+            </div>
+        </div>
+        <div id="passwordModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closePasswordModal()">&times;</span>
+                <h2>Enter Password</h2>
+                <form id="passwordForm" onsubmit="submitPassword(event)">
+                    <input type="password" id="accessPassword" placeholder="Enter URL password" required>
+                    <button type="submit" class="submit-button">Submit</button>
+                </form>
+                <p id="passwordError" class="error-message" style="display: none;">Incorrect password</p>
             </div>
         </div>
         <!-- Navigation Links -->
@@ -161,7 +179,48 @@
     </div>
 </div>
 
+<style>
+    .password-input-group {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+    
+    .password-input-group input {
+        flex: 1;
+        padding-right: 40px;
+    }
+    
+    .toggle-password {
+        position: absolute;
+        right: 5px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 5px;
+    }
+    
+    .toggle-password:hover {
+        opacity: 0.8;
+    }
+    
+    #passwordModal .modal-content {
+        max-width: 400px;
+    }
+    
+    #passwordModal input {
+        width: 100%;
+        margin: 10px 0;
+        padding: 8px;
+    }
+    
+    .error-message {
+        color: #ff0000;
+        margin-top: 10px;
+    }
 
+    </style>
+    
 
 
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
@@ -171,45 +230,7 @@
         AOS.init();
       </script>
 
-    <script>
-        // Function to open the edit modal
-        function openEditModal() {
-            const longUrl = document.getElementById('longUrlInput').value;
-            if (!longUrl) {
-                alert('Please enter a URL first');
-                return;
-            }
-            document.getElementById('modalLongUrl').value = longUrl;
-            document.getElementById('editModal').style.display = 'block';
-        }
-
-        // Function to close the edit modal
-        function closeEditModal() {
-            document.getElementById('editModal').style.display = 'none';
-        }
-
-        // Close modal when clicking outside
-        window.onclick = function(event) {
-            if (event.target == document.getElementById('editModal')) {
-                closeEditModal();
-            }
-        }
-
-        function copyToClipboard(text) {
-            navigator.clipboard.writeText(text).then(() => {
-                const message = document.getElementById('copiedMessage');
-                message.classList.add('show');
-                setTimeout(() => {
-                    message.classList.remove('show');
-                }, 2000);
-            });
-        }
-
-        // Prevent form resubmission on page refresh
-        if (window.history.replaceState) {
-            window.history.replaceState(null, null, window.location.href);
-        }
-    </script>
+    
     <script src="{{ url_for('static', filename='scripts.js') }}" defer></script>
 </body>
 </html>
