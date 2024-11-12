@@ -11,9 +11,6 @@ const Modals = {
         this.urlOptions = document.getElementById('urlOptionsModal');
         this.editUrl = document.getElementById('editModal');
         
-        console.log('URL Options Modal:', this.urlOptions);
-        console.log('Edit Modal:', this.editUrl);
-
         // Add event listeners for close buttons
         const closeButtons = document.querySelectorAll('.close');
         closeButtons.forEach(button => {
@@ -121,6 +118,7 @@ const Modals = {
             document.getElementById('clickLimit').value = data.click_limit || '';
             document.getElementById('endDate').value = data.end_date || '';
             document.getElementById('customUrl').value = data.short_url || '';
+            document.getElementById('urlPassword').value = ''; // Clear password field for security
 
             // Load QR code
             this.loadQRCode(urlId);
@@ -186,17 +184,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// Save URL options function
+// Function to save URL options
 async function saveUrlOptions() {
-    if (!currentUrlId) {
-        alert('No URL selected');
-        return;
-    }
+    if (!currentUrlId) return;
 
-    const updateData = {
-        click_limit: document.getElementById('clickLimit').value || null,
-        end_date: document.getElementById('endDate').value || null,
-        custom_url: document.getElementById('customUrl').value || null
+    const password = document.getElementById('urlPassword').value;
+
+    const data = {
+        custom_url: document.getElementById('customUrl').value,
+        click_limit: document.getElementById('clickLimit').value,
+        end_date: document.getElementById('endDate').value,
+        password: password || null  // If password is empty string, it will be null
     };
 
     try {
@@ -205,22 +203,38 @@ async function saveUrlOptions() {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(updateData)
+            body: JSON.stringify(data)
         });
 
-        const data = await response.json();
+        const result = await response.json();
 
         if (response.ok) {
             alert('URL settings updated successfully');
-            window.location.reload();
+            document.getElementById('urlOptionsModal').style.display = 'none';
+            // Reload the page to show updated data
+            location.reload();
         } else {
-            throw new Error(data.error || 'Failed to update URL settings');
+            throw new Error(result.error);
         }
     } catch (error) {
         console.error('Error saving URL options:', error);
-        alert(error.message);
+        alert('Error saving URL options: ' + error.message);
     }
 }
+
+// Modal close button handler
+document.querySelector('#urlOptionsModal .close').addEventListener('click', function() {
+    document.getElementById('urlOptionsModal').style.display = 'none';
+});
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const modal = document.getElementById('urlOptionsModal');
+    if (event.target == modal) {
+        modal.style.display = 'none';
+    }
+};
+
 
 // Delete URL function
 async function deleteUrl(urlId) {
@@ -263,4 +277,9 @@ function openEditModal() {
 // Close edit modal function
 function closeEditModal() {
     Modals.close(Modals.editUrl);
+}
+
+// Prevent form resubmission on page refresh
+if (window.history.replaceState) {
+    window.history.replaceState(null, null, window.location.href);
 }

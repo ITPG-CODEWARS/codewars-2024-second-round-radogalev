@@ -309,34 +309,77 @@ def index():
     return render_template('index.html', upabase_url=supabase_url, supabase_key=supabase_key)
 
 #Function that redirects the user depending on the situation
-@app.route('/<short_url>')
+@app.route('/<short_url>', methods=['GET', 'POST'])
 def redirect_url(short_url):
     try:
         response = supabase.table('url_data').select('*').eq('short_url', short_url).execute()
         if not response.data:
             return "URL not found", 404
-        
+
         url_data = response.data[0]
-        
+
+        # Check if URL is password protected
+        if url_data.get('password'):
+            if request.method == 'GET':
+                return render_template('password_prompt.html', short_url=short_url)
+            
+            # Handle password submission
+            submitted_password = request.form.get('password')
+            if not submitted_password or not check_password_hash(url_data['password'], submitted_password):
+                return render_template('password_prompt.html', short_url=short_url, error="Incorrect password")
+
+        # Check expiration date
         if url_data.get('end_date'):
             end_date = datetime.strptime(url_data['end_date'], '%Y-%m-%d').date()
             if datetime.now().date() > end_date:
                 return "This URL has expired", 403
-        
+
+        # Check click limit
         if url_data.get('click_limit'):
             if url_data['number_of_clicks'] >= url_data['click_limit']:
                 return render_template('click_limit_reached.html')
-        
-        # Rest of the function remains the same
-        
+
+        # Update click count
         supabase.table('url_data').update({
             'number_of_clicks': url_data['number_of_clicks'] + 1
         }).eq('id', url_data['id']).execute()
-        
+
         return redirect(url_data['long_url'])
     except Exception as e:
         print(f"Error in redirect_url: {str(e)}")
         return str(e), 500
+    
+#Function that Initialises the password protection window
+@app.route('/protected/<short_url>', methods=['GET', 'POST'])
+def protected_url(short_url):
+    try:
+        # Query the correct table and check for the password field
+        url_data = supabase.table("url_data").select("*").eq("short_url", short_url).single().execute()
+
+        if not url_data['data']:
+            return "URL not found", 404
+
+        url_info = url_data['data']
+
+        if request.method == 'POST':
+            entered_password = request.form.get("url_password")
+
+            # If the URL is password-protected
+            if url_info['password']:
+                if entered_password and check_password_hash(url_info['password'], entered_password):
+                    return redirect(url_info['long_url'])
+                else:
+                    flash("Incorrect password, please try again.")
+            else:
+                return redirect(url_info['long_url'])
+
+        # If it's GET, show the password form
+        return render_template('password_form.html')
+
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        return str(e), 500
+
 
 #Function that logs out the user
 @app.route('/logout')
